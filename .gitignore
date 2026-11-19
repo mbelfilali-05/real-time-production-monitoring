@@ -1,0 +1,31 @@
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Big Data generated files
+data/delta/
+data/checkpoints/
+data/tmp/
+
+# Spark temporary files
+spark-warehouse/
+metastore_db/
+derby.log
+
+# IDE and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
