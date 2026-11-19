@@ -1,0 +1,43 @@
+
+services:
+  bronze-worker:
+    image: apache/spark:3.5.3
+    user: root
+    working_dir: /opt/project
+    environment:
+      SPARK_LOCAL_HOSTNAME: bronze-worker
+      HOME: /tmp
+    volumes:
+      - ./spark:/opt/project/spark
+      - ./data:/opt/project/data
+    depends_on:
+      - kafka
+    command:
+      - /opt/spark/bin/spark-submit
+      - --master
+      - local[2]
+      - --packages
+      - org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3,io.delta:delta-spark_2.12:3.2.0
+      - /opt/project/spark/bronze_ingestion.py
+    restart: unless-stopped
+
+  medallion-worker:
+    image: apache/spark:3.5.3
+    user: root
+    working_dir: /opt/project
+    environment:
+      SPARK_LOCAL_HOSTNAME: medallion-worker
+      HOME: /tmp
+    volumes:
+      - ./spark:/opt/project/spark
+      - ./data:/opt/project/data
+    depends_on:
+      - kafka
+    command:
+      - /opt/spark/bin/spark-submit
+      - --master
+      - local[2]
+      - --packages
+      - io.delta:delta-spark_2.12:3.2.0
+      - /opt/project/spark/medallion_streaming.py
+    restart: unless-stopped
